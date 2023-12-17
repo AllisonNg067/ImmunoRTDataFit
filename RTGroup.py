@@ -11,7 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from differential_equations import radioimmuno_response_model
-import data_processing as dp
+import new_data_processing as dp
+from data_processing import getCellCounts
 data = pd.read_csv("../data/White mice - RT only.csv")
 nit_max = 300
 nit_T = 200
@@ -32,43 +33,45 @@ t_treat_c4 = np.zeros(3)
 t_treat_p1 = np.zeros(3)
 c4 = 0
 p1 = 0
-param_best, *_, MSEs, _ = dp.annealing_optimization(data, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov)
-for i in range(1, 17):
-    row = dp.getCellCounts(data, i)
-    day_length = int(len(row)/3)
-    times = row[0:day_length]
-    T = row[day_length:2*day_length]
-    fittedVolumes, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
-    ind = np.rint(row[0:day_length].astype(int) / delta_t).astype(int)
-    #print(fittedVolumes)
-    vols = fittedVolumes[0][ind]
+for i in range(1, 15):
+  row = getCellCounts(data, i)
+
+  #print(row)
+  day_length = int(len(row)/3)
+  #t_f2 = row[day_length]
+  param_best, *_, MSEs, fittedVolumes = dp.annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov, day_length)
+  print(param_best)
+  param_best_list.append(param_best)
+  times = row[0:day_length]
+  T = row[day_length:2*day_length]
   # print(T)
   # print(fittedVolumes)
-    plt.figure(figsize=(8,8))
+  plt.figure(figsize=(8,8))
 
-    figure_name = "RT tumor volume vs time " + str(i) + " .png"
+  plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
+  plt.plot(np.arange(0,nit_max*nit_T + 1), MSEs, 'o', label='Best MSE')
+  plt.title('Plot 1 with 1 set of data')
+  plt.legend()
 
 # Creating the second plot with two sets of data on the same plot
-    plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
-    plt.plot(times, T, 'o', color ='red', label ="Tumor Cell data")
-    plt.plot(times, vols, '--', color ='red', label ="optimized Tumor Cell data")
-    plt.title('Tumour Volume vs Time')
-    plt.legend()
-    plt.savefig(figure_name)
+  plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
+  plt.plot(times, T, 'o', color ='red', label ="Tumor Cell data")
+  plt.plot(times, fittedVolumes, '--', color ='red', label ="optimized Tumor Cell data")
+  plt.title('Plot 2 with 2 sets of data')
+  plt.legend()
 
-
-
-plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
-plt.plot(np.arange(0,nit_max*nit_T + 1), MSEs, 'o', label='Best MSE')
-plt.title('Mean Square Errors')
-plt.legend()
-plt.tight_layout()
-plt.show()
-plt.savefig("MSEs RT.png")
+  plt.tight_layout()
+  figure_name = "control tumor volume vs time " + str(i) + " .png"
+  plt.savefig(figure_name)
 
 end_time = time.time()
 time_taken = end_time - start_time
-
+dataFrame = pd.DataFrame(param_best_list[0:])
+std_devs = dataFrame.std()
+means = dataFrame.mean()
+dataFrame.to_csv("best parameters for RT set.csv", index=False)
+std_devs.to_csv("errors for RT set.csv", index=False)
+means.to_csv("mean of each parameter for RT set.csv", index=False)
 f = open("best parameters RT.txt", "w")
 f.write("best parameters " + str(param_best))
 f.write("\n")
