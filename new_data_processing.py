@@ -1,3 +1,5 @@
+from differential_equations import radioimmuno_response_model
+
 def annealing_optimization(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov, day_length):
     param_op = param_0.copy()
     p = param_0[32]
