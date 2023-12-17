@@ -12,11 +12,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from differential_equations import radioimmuno_response_model
 import data_processing as dp
-data = pd.read_csv("../data/White mice - no treatment.csv")
+data = pd.read_csv("../data/White mice - RT only.csv")
 nit_max = 300
 nit_T = 200
 param_0 = [500000, 0.35, 0.02, 0.003, 0.1, 1.0, 1.5, 1e-06, 0.0, 1.82061785504427e-21, 500.0, 0.03, 0.8492481540336232, 0.3, 0.1, 0.01, 2.0, 0.0674559557659555, 287936.7977312881, 0.3009826699557746, 8.59576707979513e-09, 5.209325451740283e-07, 0, 5.0, 0.1, 1e-08, 20.0, 0.2549737362820806, 0.9595475657773529, 0.04652645764362457, 2.0858842542417699e-106, 0.2, 0, 0.5]
-param_id = [1,11,12,13,14,18,19,20,21, 22, 25, 26, 27, 28,30,32] #index of parameters to be changed
+param_id = [2,3,4,10,31] #index of parameters to be changed
 free = [1,1,0]
 LQL = 0
 activate_vd = 0
@@ -26,8 +26,8 @@ dT = 0.98
 t_f1 = 0
 t_f2 = 40
 delta_t = 0.05
-D = np.zeros(3)
-t_rad = np.zeros(3)
+D = np.ones(5)*2
+t_rad = np.array([10,11,12,13,14])
 t_treat_c4 = np.zeros(3)
 t_treat_p1 = np.zeros(3)
 c4 = 0
@@ -46,7 +46,7 @@ for i in range(1, 17):
   # print(fittedVolumes)
     plt.figure(figsize=(8,8))
 
-    figure_name = "tumor volume vs time " + str(i) + " .png"
+    figure_name = "RT tumor volume vs time " + str(i) + " .png"
 
 # Creating the second plot with two sets of data on the same plot
     plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
@@ -64,12 +64,12 @@ plt.title('Mean Square Errors')
 plt.legend()
 plt.tight_layout()
 plt.show()
-plt.savefig("MSEs.png")
+plt.savefig("MSEs RT.png")
 
 end_time = time.time()
 time_taken = end_time - start_time
 
-f = open("best parameters control.txt", "w")
+f = open("best parameters RT.txt", "w")
 f.write("best parameters " + str(param_best))
 f.write("\n")
 f.write("mean square error " + str(MSEs[-1]))
