@@ -70,7 +70,7 @@ for i in range(1, 17):
 
 end_time = time.time()
 time_taken = end_time - start_time
-dataFrame = pd.DataFrame(data[0:])
+dataFrame = pd.DataFrame(param_best_list[0:])
 std_devs = dataFrame.std()
 means = dataFrame.mean()
 dataFrame.to_csv(file_name, index=False)
