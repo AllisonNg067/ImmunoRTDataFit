@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from differential_equations import radioimmuno_response_model
 import new_data_processing as dp
+from data_processing import getCellCounts
 data = pd.read_csv("../data/White mice - no treatment.csv")
 nit_max = 300
 nit_T = 200
@@ -41,7 +42,7 @@ for i in range(1, 17):
   #print(row)
   day_length = int(len(row)/3)
   #t_f2 = row[day_length]
-  param_best, *_, MSEs = annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov)
+  param_best, *_, MSEs = dp.annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov)
   print(param_best)
   param_best_list.append(param_best)
   times = row[0:day_length]
