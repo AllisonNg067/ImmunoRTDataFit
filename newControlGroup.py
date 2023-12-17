@@ -42,7 +42,7 @@ for i in range(1, 17):
   #print(row)
   day_length = int(len(row)/3)
   #t_f2 = row[day_length]
-  param_best, *_, MSEs = dp.annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov)
+  param_best, *_, MSEs = dp.annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov, day_length)
   print(param_best)
   param_best_list.append(param_best)
   times = row[0:day_length]
