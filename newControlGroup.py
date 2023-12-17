@@ -54,19 +54,20 @@ for i in range(1, 17):
 
   plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
   plt.plot(np.arange(0,nit_max*nit_T + 1), MSEs, 'o', label='Best MSE')
-  plt.title('Plot 1 with 1 set of data')
+  plt.title('MSEs')
   plt.legend()
 
 # Creating the second plot with two sets of data on the same plot
   plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
   plt.plot(times, T, 'o', color ='red', label ="Tumor Cell data")
   plt.plot(times, fittedVolumes, '--', color ='red', label ="optimized Tumor Cell data")
-  plt.title('Plot 2 with 2 sets of data')
+  plt.title('Tumor volume vs Time')
   plt.legend()
+  
 
   plt.tight_layout()
-  plt.show()
-
+  figure_name = "control tumor volume vs time " + str(i) + " .png"
+  plt.savefig(figure_name)
 
 
 end_time = time.time()
