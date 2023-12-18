@@ -7,7 +7,7 @@ import pandas as pd
 from differential_equations import radioimmuno_response_model
 import new_data_processing as dp
 from data_processing import getCellCounts
-data = pd.read_csv("../data/White mice - PD 1 10.csv")
+data = pd.read_csv("../data/White mice data - PD 1 10.csv")
 print(len(data.columns))
 nit_max = 300
 nit_T = 200
