@@ -42,13 +42,16 @@ for i in range(1, 17):
   #print(row)
   day_length = int(len(row)/3)
   #t_f2 = row[day_length]
-  param_best, *_, MSEs = dp.annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov, day_length)
+  param_best, *_, MSEs, _ = dp.annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov, day_length)
   print(param_best)
   param_best_list.append(param_best)
   times = row[0:day_length]
   T = row[day_length:2*day_length]
-  fittedVolumes, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
-  # print(T)
+  fittedVolumes, _, time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
+  #crop fitted volumes so that its same size as array of data volumes
+  indexes = [index for index, item in enumerate(time) if item in times]
+  fitVolumesCropped = [fittedVolumes[index] for index in indexes]
+ # print(T)
   # print(fittedVolumes)
   plt.figure(figsize=(8,8))
 
@@ -60,7 +63,7 @@ for i in range(1, 17):
 # Creating the second plot with two sets of data on the same plot
   plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
   plt.plot(times, T, 'o', color ='red', label ="Tumor Cell data")
-  plt.plot(times, fittedVolumes, '--', color ='red', label ="optimized Tumor Cell data")
+  plt.plot(times, fitVolumesCropped, '--', color ='red', label ="optimized Tumor Cell data")
   plt.title('Tumor volume vs Time')
   plt.legend()
   
