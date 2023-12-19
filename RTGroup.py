@@ -50,7 +50,7 @@ for i in range(1, 15):
   fittedVolumes, _, time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
   #crop fitted volumes so that its same size as array of data volumes
   indexes = [index for index, item in enumerate(time) if item in times]
-  fitVolumesCropped = [fittedVolumes[index] for index in indexes]
+  fitVolumesCropped = [fittedVolumes[0][index] for index in indexes]
   plt.figure(figsize=(8,8))
 
   plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
