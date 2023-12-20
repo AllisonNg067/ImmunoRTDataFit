@@ -36,7 +36,7 @@ p1 = 0
 
 param_best_list = []
 file_name = 'controlBestParameters.csv'
-for i in range(1, 17):
+for i in range(1, 2):
   row = getCellCounts(data, i)
 
   #print(row)
@@ -47,9 +47,9 @@ for i in range(1, 17):
   param_best_list.append(param_best)
   times = row[0:day_length]
   T = row[day_length:2*day_length]
-  fittedVolumes, _, time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
+  fittedVolumes, _, Time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
   #crop fitted volumes so that its same size as array of data volumes
-  indexes = [index for index, item in enumerate(time) if item in times]
+  indexes = [index for index, item in enumerate(Time) if item in times]
   fitVolumesCropped = [fittedVolumes[0][index] for index in indexes]
  # print(T)
   # print(fittedVolumes)
