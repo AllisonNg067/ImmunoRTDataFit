@@ -40,9 +40,9 @@ for i in range(1,9):
   param_best_list.append(param_best)
   times = row[0:day_length]
   T = row[day_length:2*day_length]
-  fittedVolumes, _, time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
+  fittedVolumes, _, Time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
   #crop fitted volumes so that its same size as array of data volumes
-  indexes = [index for index, item in enumerate(time) if item in times]
+  indexes = [index for index, item in enumerate(Time) if item in times]
   fitVolumesCropped = [fittedVolumes[0][index] for index in indexes]
   # print(T)
   # print(fittedVolumes)
@@ -80,9 +80,9 @@ for i in range(1,7):
   param_best_list.append(param_best)
   times = row[0:day_length]
   T = row[day_length:2*day_length]
-  fittedVolumes, _, time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
+  fittedVolumes, _, Time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
   #crop fitted volumes so that its same size as array of data volumes
-  indexes = [index for index, item in enumerate(time) if item in times]
+  indexes = [index for index, item in enumerate(Time) if item in times]
   fitVolumesCropped = [fittedVolumes[0][index] for index in indexes]
   # print(T)
   # print(fittedVolumes)
@@ -113,8 +113,6 @@ means = dataFrame.mean()
 dataFrame.to_csv(file_name, index=False)
 std_devs.to_csv("errors for PD1 set.csv", index=False)
 means.to_csv("mean of each parameter for PD1 set.csv", index=False)
-f = open("best parameters PD1.txt", "w")
-f.write("mean square error " + str(MSEs[-1]))
-f.write("\n")
+f = open("time taken PD1.txt", "w")
 f.write("execution time " + str(time_taken))
 f.close()
