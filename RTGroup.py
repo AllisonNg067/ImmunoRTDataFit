@@ -47,9 +47,9 @@ for i in range(1, 15):
   T = row[day_length:2*day_length]
   # print(T)
   # print(fittedVolumes)
-  fittedVolumes, _, time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
+  fittedVolumes, _, Time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
   #crop fitted volumes so that its same size as array of data volumes
-  indexes = [index for index, item in enumerate(time) if item in times]
+  indexes = [index for index, item in enumerate(Time) if item in times]
   fitVolumesCropped = [fittedVolumes[0][index] for index in indexes]
   plt.figure(figsize=(8,8))
 
@@ -77,10 +77,6 @@ means = dataFrame.mean()
 dataFrame.to_csv("best parameters for RT set.csv", index=False)
 std_devs.to_csv("errors for RT set.csv", index=False)
 means.to_csv("mean of each parameter for RT set.csv", index=False)
-f = open("best parameters RT.txt", "w")
-f.write("best parameters " + str(param_best))
-f.write("\n")
-f.write("mean square error " + str(MSEs[-1]))
-f.write("\n")
+f = open("time taken RT.txt", "w")
 f.write("execution time " + str(time_taken))
 f.close()
