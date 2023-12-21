@@ -19,7 +19,13 @@ param = pd.read_csv("RT means.csv")
 #print(param)
 param_0 = list(np.transpose(np.array(param))[0])
 #print(param_0)
-param_id = [2,3,4,10,31] #index of parameters to be changed
+param_id = [26, 27, 28, 33] 
+D = np.zeros(3)
+t_rad = D
+delta_t = 0.05
+t_treat_c4 = np.zeros(3)
+t_treat_p1 = np.array([10,12,14])
+c4 = 0
 free = [1,1,0]
 LQL = 0
 activate_vd = 0
@@ -28,13 +34,7 @@ T_0 = 1
 dT = 0.98
 t_f1 = 0
 t_f2 = 45
-delta_t = 0.05
-D = np.ones(5)*2
-t_rad = np.array([10,11,12,13,14])
-t_treat_c4 = np.zeros(3)
-t_treat_p1 = np.zeros(3)
-c4 = 0
-p1 = 0
+p1 = 0.2
 param_best_list = []
 def process_data(i):
   row = getCellCounts(data, i)
@@ -86,6 +86,7 @@ for i in range(iterations):
 
 iterations = 6
 data = pd.read_csv("../data/White mice data - PD-1 15.csv")
+t_treat_p1 = np.array([15,17,19])
 with concurrent.futures.ThreadPoolExecutor(max_workers=iterations) as executor:
     futures = {executor.submit(process_data, i): i for i in range(1, iterations + 1)}
     concurrent.futures.wait(futures)
