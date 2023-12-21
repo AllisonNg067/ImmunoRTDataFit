@@ -11,6 +11,9 @@ data = pd.read_csv("../data/White mice data - PD 1 10.csv")
 print(len(data.columns))
 nit_max = 300
 nit_T = 200
+param = pd.read_csv("mean of each parameter for RT set.csv")
+#print(param)
+param_0 = list(np.transpose(np.array(param))[0])
 param_id = [26, 27, 28, 33] #index of parameters to be changed
 free = [1,1,0]
 LQL = 0
