@@ -16,7 +16,10 @@ from data_processing import getCellCounts
 data = pd.read_csv("../data/White mice - RT only.csv")
 nit_max = 300
 nit_T = 200
-param_0 = [500000, 0.35, 0.02, 0.003, 0.1, 1.0, 1.5, 1e-06, 0.0, 1.82061785504427e-21, 500.0, 0.03, 0.8492481540336232, 0.3, 0.1, 0.01, 2.0, 0.0674559557659555, 287936.7977312881, 0.3009826699557746, 8.59576707979513e-09, 5.209325451740283e-07, 0, 5.0, 0.1, 1e-08, 20.0, 0.2549737362820806, 0.9595475657773529, 0.04652645764362457, 2.0858842542417699e-106, 0.2, 0, 0.5]
+param = pd.read_csv("mean of each parameter for control set.csv")
+#print(param)
+param_0 = list(np.transpose(np.array(param))[0])
+#print(param_0)
 param_id = [2,3,4,10,31] #index of parameters to be changed
 free = [1,1,0]
 LQL = 0
