@@ -1,8 +1,8 @@
 #!/bin/bash -l
 #SBATCH --job-name=RTParallelParameterFit
-#SBATCH --nodes=2
-#SBATCH --tasks-per-node=8
-#SBATCH --cpus-per-task=8
+#SBATCH --nodes=3
+#SBATCH --tasks-per-node=10
+#SBATCH --cpus-per-task=10
 #SBATCH --time=24:00:00
 # load modules
 module load python/3.10.10
