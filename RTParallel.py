@@ -19,8 +19,8 @@ from differential_equations import radioimmuno_response_model
 import new_data_processing as dp
 from data_processing import getCellCounts
 data = pd.read_csv("../data/White mice - RT only.csv")
-nit_max = 300
-nit_T = 200
+nit_max = 100
+nit_T = 100
 param = pd.read_csv("mean of each parameter for control set.csv")
 #print(param)
 param_0 = list(np.transpose(np.array(param))[0])
