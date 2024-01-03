@@ -7,10 +7,10 @@ import pandas as pd
 from differential_equations import radioimmuno_response_model
 import new_data_processing as dp
 from data_processing import getCellCounts
-data = pd.read_csv("../data/White mice data - PD 1 10.csv")
+data = pd.read_csv("../data/White mice data - PD-1 10.csv")
 print(len(data.columns))
-nit_max = 300
-nit_T = 200
+nit_max = 100
+nit_T = 100
 param = pd.read_csv("mean of each parameter for RT set.csv")
 #print(param)
 param_0 = list(np.transpose(np.array(param))[0])
@@ -38,7 +38,7 @@ for i in range(1,9):
   #print(row)
   day_length = int(len(row)/3)
   #t_f2 = row[day_length]
-  param_best, *_, MSEs, _ = annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov, day_length)
+  param_best, *_, MSEs, _ = dp.annealing_optimization(row, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov, day_length)
   print(param_best)
   param_best_list.append(param_best)
   times = row[0:day_length]
@@ -51,20 +51,20 @@ for i in range(1,9):
   # print(fittedVolumes)
   plt.figure(figsize=(8,8))
 
-  plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
-  plt.plot(np.arange(0,nit_max*nit_T + 1), MSEs, 'o', label='Best MSE')
-  plt.title('MSEs')
-  plt.legend()
+  #plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
+  #plt.plot(np.arange(0,nit_max*nit_T + 1), MSEs, 'o', label='Best MSE')
+  #plt.title('MSEs')
+  #plt.legend()
 
 # Creating the second plot with two sets of data on the same plot
-  plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
+  #plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
   plt.plot(times, T, 'o', color ='red', label ="Tumor Cell data")
   plt.plot(times, fitVolumesCropped, '--', color ='red', label ="optimized Tumor Cell data")
   plt.title('Volume vs Time for PD 1 Treatment')
   plt.legend()
 
   plt.tight_layout()
-  figure_name = "anti PD L1 10 tumor volume vs time " + str(i) + " .png"
+  figure_name = "anti PD L1 10 tumour volume vs time " + str(i) + " .png"
   plt.savefig(figure_name)
 
 print()
@@ -104,7 +104,7 @@ for i in range(1,7):
   plt.legend()
 
   plt.tight_layout()
-  figure_name = "anti PD L1 15 tumor volume vs time " + str(i) + " .png"
+  figure_name = "anti PD L1 15 tumour volume vs time " + str(i) + " .png"
   plt.savefig(figure_name)
 print(param_best_list)
 
@@ -114,8 +114,8 @@ dataFrame = pd.DataFrame(param_best_list[0:])
 std_devs = dataFrame.std()
 means = dataFrame.mean()
 dataFrame.to_csv(file_name, index=False)
-std_devs.to_csv("errors for PD1 set.csv", index=False)
-means.to_csv("mean of each parameter for PD1 set.csv", index=False)
-f = open("time taken PD1.txt", "w")
+std_devs.to_csv("PD1 errors.csv", index=False)
+means.to_csv("PD1 mean.csv", index=False)
+f = open("PD1 time.txt", "w")
 f.write("execution time " + str(time_taken))
 f.close()
