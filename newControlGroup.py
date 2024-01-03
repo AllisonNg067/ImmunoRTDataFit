@@ -36,7 +36,7 @@ p1 = 0
 
 param_best_list = []
 file_name = 'controlBestParameters.csv'
-for i in range(1, 2):
+for i in range(1, 17):
   row = getCellCounts(data, i)
 
   #print(row)
