@@ -35,10 +35,15 @@ dT = 0.98
 t_f1 = 0
 t_f2 = 45
 p1 = 0.2
-param_best_list = []
+param_best_list_all = []
+fitVolumes_all = []
+times_list_all = []
+TList_all = []
 def process_data(i):
   row = getCellCounts(data, i)
-
+  param_best_list = []
+  times_list = []
+  TList = []
   #print(row)
   day_length = int(len(row)/3)
   #t_f2 = row[day_length]
@@ -46,13 +51,17 @@ def process_data(i):
   print(param_best)
   param_best_list.append(param_best)
   times = row[0:day_length]
+  times_list.append(times)
   T = row[day_length:2*day_length]
+  TList.append(T)
   # print(T)
   # print(fittedVolumes)
   fittedVolumes, _, Time, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
   #crop fitted volumes so that its same size as array of data volumes
   indexes = [index for index, item in enumerate(Time) if item in times]
   fitVolumesCropped = [fittedVolumes[0][index] for index in indexes]
+  return param_best_list, fitVolumesCropped, times_list, TList
+
 
 iterations = 9  # Or any other number of iterations
 
@@ -61,20 +70,26 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=iterations) as executor:
     futures = {executor.submit(process_data, i): i for i in range(1, iterations + 1)}
     concurrent.futures.wait(futures)
 
+    for future in concurrent.futures.as_completed(futures):
+        param_best, fitVolumesCropped, times_list, TList = future.result()
+        param_best_list_all.append(param_best)
+        fitVolumes_all.append(fitVolumesCropped)
+        times_list_all.append(times_list)
+        TList_all.append(TList)
 for i in range(iterations):
     plt.figure(figsize=(8,8))
 
-    plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
-    plt.plot(np.arange(0,nit_max*nit_T + 1), MSEList[i], 'o', label='Best MSE')
-    plt.title('Mean Square Errors (MSEs)')
-    plt.legend()
+    #plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
+    #plt.plot(np.arange(0,nit_max*nit_T + 1), MSEList[i], 'o', label='Best MSE')
+    #plt.title('Mean Square Errors (MSEs)')
+    #plt.legend()
 
 # Creating the second plot with two sets of data on the same plot
-    plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
-    print(times)
-    print(TList[i])
-    plt.plot(timesList[i], TList[i], 'o', color ='red', label ="Tumor Cell data")
-    plt.plot(timesList[i], fittedVolumeList[i], '--', color ='red', label ="optimized Tumor Cell data")
+    #plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
+    #print(times)
+    #print(TList[i])
+    plt.plot(times_list_all[i], TList_all[i], 'o', color ='red', label ="Tumor Cell data")
+    plt.plot(times_list_all[i], fitVolumes_all[i], '--', color ='red', label ="optimized Tumor Cell data")
     plt.xlabel("Time (days)")
     plt.ylabel("Volume (mm^3)")
     plt.title('Tumour Volume vs Time with Model fit')
@@ -87,22 +102,33 @@ for i in range(iterations):
 iterations = 6
 data = pd.read_csv("../data/White mice data - PD-1 15.csv")
 t_treat_p1 = np.array([15,17,19])
+fitVolumes_all = []
+times_list_all = []
+TList_all = []
+
 with concurrent.futures.ThreadPoolExecutor(max_workers=iterations) as executor:
     futures = {executor.submit(process_data, i): i for i in range(1, iterations + 1)}
     concurrent.futures.wait(futures)
+    for future in concurrent.futures.as_completed(futures):
+        param_best, fitVolumesCropped, times_list, TList = future.result()
+        param_best_list_all.append(param_best)
+        fitVolumes_all.append(fitVolumesCropped)
+        times_list_all.append(times_list)
+        TList_all.append(TList)
+
 
 for i in range(iterations):
     plt.figure(figsize=(8,8))
 
-    plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
-    plt.plot(np.arange(0,nit_max*nit_T + 1), MSEList[i], 'o', label='Best MSE')
-    plt.title('Mean Square Errors (MSEs)')
-    plt.legend()
+    #plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
+    #plt.plot(np.arange(0,nit_max*nit_T + 1), MSEList[i], 'o', label='Best MSE')
+    #plt.title('Mean Square Errors (MSEs)')
+    #plt.legend()
 
 # Creating the second plot with two sets of data on the same plot
-    plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
-    print(times)
-    print(TList[i])
+    #plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
+    #print(times)
+    #print(TList[i])
     plt.plot(timesList[i], TList[i], 'o', color ='red', label ="Tumor Cell data")
     plt.plot(timesList[i], fittedVolumeList[i], '--', color ='red', label ="optimized Tumor Cell data")
     plt.xlabel("Time (days)")
