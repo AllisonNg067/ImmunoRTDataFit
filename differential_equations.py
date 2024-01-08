@@ -251,15 +251,15 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
     vol_flag = 1          # 1 if initial volume was achieved, 0 otherwise
     time_flag = 1         # 1 if initial time was achieved, 0 otherwise
 
-    if free_flag == 1:
-        if free_op == 0:
-            vol_in = free[2]
-            vol_flag = 0
-        else:
-            t_in = free[2]
-            time_flag = 0
-    else:
-        m = t_f2/delta_t + 1
+    #if free_flag == 1:
+        #if free_op == 0:
+            #vol_in = free[2]
+            #vol_flag = 0
+        #else:
+            #t_in = free[2]
+            #time_flag = 0
+    #else:
+        #m = t_f2/delta_t + 1
 
     p_1 = 0
     c_4 = 0
@@ -321,6 +321,7 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
         # print(time)
         # print(t_treat_p1)
         [im_death[:,j], p1_flag, p_1] =immune_death_dePillis(C_tot[:,j], Ta_tum[:,j], p, q, s, p1, p_1, mi, vol_flag, time_flag, time[j+1], t_treat_p1[ind_p1], delta_t, j) #This line modifies Ta_lym[:,j] somehow
+        immune = (im_death[:,j][0],)
         #if j>650:
             #print("Tb_lym", Tb_lym[:,j])
             #print("store Ta", storeTalym)
@@ -337,7 +338,7 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
         elif C[:,j] == 0:
             newC = (0,)
         else:
-            newC = (max(0, C[:,j] + delta_t * (prol - im_death[:,j]) * C[:,j]),)
+            newC = (max(0, C[:,j] + delta_t * (prol - immune[0]) * C[:,j]),)
         # if j>650:
         #     print("Tb_lym", Tb_lym[:,j])
             #print("Ta before A activate T function", Ta_lym[:,j])
