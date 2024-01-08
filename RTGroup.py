@@ -14,12 +14,13 @@ from differential_equations import radioimmuno_response_model
 import new_data_processing as dp
 from data_processing import getCellCounts
 data = pd.read_csv("../data/White mice - RT only.csv")
-nit_max = 300
-nit_T = 200
+nit_max = 100
+nit_T = 100
 param = pd.read_csv("mean of each parameter for control set.csv")
 #print(param)
 param_0 = list(np.transpose(np.array(param))[0])
 #print(param_0)
+param[26] = 10
 param_id = [2,3,4,10,31] #index of parameters to be changed
 free = [1,1,0]
 LQL = 0
@@ -56,16 +57,16 @@ for i in range(1, 15):
   fitVolumesCropped = [fittedVolumes[0][index] for index in indexes]
   plt.figure(figsize=(8,8))
 
-  plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
-  plt.plot(np.arange(0,nit_max*nit_T + 1), MSEs, 'o', label='Best MSE')
-  plt.title('Plot 1 with 1 set of data')
-  plt.legend()
+  #plt.subplot(2, 1, 1)  # 2 rows, 1 column, plot 1
+  #plt.plot(np.arange(0,nit_max*nit_T + 1), MSEs, 'o', label='Best MSE')
+  #plt.title('Plot 1 with 1 set of data')
+  #plt.legend()
 
 # Creating the second plot with two sets of data on the same plot
-  plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
+  #plt.subplot(2, 1, 2)  # 2 rows, 1 column, plot 2
   plt.plot(times, T, 'o', color ='red', label ="Tumor Cell data")
   plt.plot(times, fitVolumesCropped, '--', color ='red', label ="optimized Tumor Cell data")
-  plt.title('Plot 2 with 2 sets of data')
+  plt.title('Tumour Volume vs Time after RT')
   plt.legend()
 
   plt.tight_layout()
