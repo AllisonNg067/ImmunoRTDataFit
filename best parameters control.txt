@@ -1,2 +1,2 @@
-mean square error 22.689071494755353
-execution time 68550.42478823662
+mean square error 21.43145560061834
+execution time 10920.663230419159
