@@ -20,7 +20,7 @@ def annealing_optimization(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param
             #print("j", j)
             param_new = neighbor(param_op, param_id, T, T_0) #get new parameters
             param_new[32] = p
-            print("p1", param_new[32])
+            # print("p1", param_new[32])
             # print(param_op)
             # print(param_new)
             cost_new, t_eq, sol_new = least_squares(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_new, delta_t, free, t_f1, t_f2, LQL, activate_vd, use_Markov, day_length)
@@ -50,12 +50,12 @@ def annealing_optimization(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param
     return param_best, cost_best, t_eq_best, np.array(costs), sol_best
 
 def neighbor(param, param_id, T, T_0):
-    print(param_id)
+    # print(param_id)
     #var decreases when T decreases (more simulations)
     var = (2 * np.random.rand() - 1.0) * 0.5 * np.sqrt(T / T_0)
     m = len(param_id)
     id_ = np.random.randint(0, m) #index from 0 to m-1
-    print("id", param_id[id_])
+    # print("id", param_id[id_])
     # print("before change", param[param_id[id_]])
     if param_id[id_] == 34:
         param[param_id[id_]] += var * 0.05
@@ -156,3 +156,16 @@ def getCellCounts(data, colNumber):
     for item in stdevs:
       newList.append(item)
     return np.array(newList)
+
+def merge_lists(listOfLists):
+  #merge lists of same length so that if one element in the list is 0 and the other is non 0, we take the non zero element
+  res_list = listOfLists[0]
+  for i in range(len(res_list)):
+    vals = [res_list[i]]
+    for j in range(1, len(listOfLists)):
+        vals.append(listOfLists[j][i])
+    for k in range(len(vals)):
+      if vals[k] != 0:
+        res_list[i] = vals[k]
+        break  
+  return res_list
