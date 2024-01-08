@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --job-name=controlGroupParameterFit
-#SBATCH --nodes=1
-#SBATCH --tasks-per-node=6
+#SBATCH --nodes=2
+#SBATCH --tasks-per-node=8
 #SBATCH --cpus-per-task=8
 #SBATCH --time=24:00:00
 # load modules
