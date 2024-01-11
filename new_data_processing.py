@@ -169,3 +169,13 @@ def merge_lists(listOfLists):
         res_list[i] = vals[k]
         break  
   return res_list
+
+def log_normal_parameters(mean, variance):
+  sigma2 = np.log(variance/mean**2 + 1)
+  mu = np.log(mean) - sigma2/2
+  return (mu, sigma2)
+
+def getTreatmentTime(times, C):
+  for i in range(len(C[0])):
+    if C[0][i] < 0.5:
+      return times[i]
