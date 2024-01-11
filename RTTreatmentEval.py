@@ -115,6 +115,6 @@ dataFrame = pd.DataFrame(data, columns=["RT Treatment Days", "RT Dose", "Mean Tr
 print(dataFrame)
 dataFrame.to_csv(file_name, index=False)
 end_time = time.time()
-f.open('time taken RT ' + num_fractions + 'treatment eval.txt', 'w')
+f = open('time taken RT ' + str(num_fractions) + ' treatment eval.txt', 'w')
 f.write("TIME TAKEN " + str(end_time - start_time))
 f.close
