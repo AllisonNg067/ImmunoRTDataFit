@@ -20,7 +20,7 @@ param = pd.read_csv("mean of each parameter for control set.csv")
 #print(param)
 param_0 = list(np.transpose(np.array(param))[0])
 #print(param_0)
-param[26] = 10
+#param[26] = 10
 param_id = [2,3,4,10,31] #index of parameters to be changed
 free = [1,1,0]
 LQL = 0
