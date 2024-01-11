@@ -86,7 +86,7 @@ def evaluate_patient(i, k):
 def trial_treatment(i):
   schedule = schedule_list[i]
   t_rad = schedule
-  t_f2 = schedule[0] + 30
+  t_f2 = schedule[-1] + 30
   treatment_times = []
   treatment_times_list = []
   D = DList[i]
