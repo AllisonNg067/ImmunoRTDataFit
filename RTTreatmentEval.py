@@ -56,7 +56,7 @@ all_res_list = []
 IT = (False, False)
 num_fractions = 1
 file_name = 'RT Mean Treatment Times ' + str(num_fractions) + ' fraction.csv'
-schedule_list, DList = get_treatment_and_dose(40, num_fractions, param)
+schedule_list, DList = get_treatment_and_dose(60, num_fractions, param)
 paramNew = list(param)
 
 def evaluate_patient(i, k):
