@@ -59,7 +59,7 @@ file_name = 'RT Mean Treatment Times ' + str(num_fractions) + ' fraction.csv'
 schedule_list, DList = get_treatment_and_dose(40, num_fractions, param)
 paramNew = list(param)
 
-def evaluate_patient(k):
+def evaluate_patient(i, k):
   for j in range(len(param)):
       if errorMerged[j] != 0:
         #gets log normal parameters
@@ -72,6 +72,8 @@ def evaluate_patient(k):
         #ensure pd1 and ctla concentration is 0
         paramNew[j] = 0
     #print(paramNew)
+  D = DList[i]
+  t_rad = schedule_list[i]
   vol, _, Time, _, C, *_ = radioimmuno_response_model(paramNew, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
   #print(C)
   #show_plot(time, vol)
@@ -87,8 +89,10 @@ def trial_treatment(i):
   t_f2 = schedule[0] + 30
   treatment_times = []
   treatment_times_list = []
+  D = DList[i]
+  args = [(i, k) for k in range(sample_size)]
   with concurrent.futures.ThreadPoolExecutor() as executor:
-    treatment_times = list(executor.map(evaluate_patient, range(sample_size)))
+          treatment_times = list(executor.map(lambda p: evaluate_patient(*p), args))
   treatment_times = [x for x in treatment_times if np.isnan(x) == False]
   if treatment_times == []:
       treatment_res_list = [t_rad, D, np.nan, np.nan, np.nan, len(treatment_times)/sample_size, treatment_times]
