@@ -63,7 +63,7 @@ def evaluate_patient(k):
   for j in range(len(param)):
       if errorMerged[j] != 0:
         #gets log normal parameters
-        logNormalParams = log_normal_parameters(param[j], errorMerged[j])
+        logNormalParams = dp.log_normal_parameters(param[j], errorMerged[j])
         #samples parameters from log normal distribution
         paramNew[j] = min(max(np.random.lognormal(mean=logNormalParams[0], sigma = logNormalParams[1]), 0.8*param[j]), 2*param[j])
       if j == 26:
@@ -75,8 +75,8 @@ def evaluate_patient(k):
   vol, _, Time, _, C, *_ = radioimmuno_response_model(paramNew, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
   #print(C)
   #show_plot(time, vol)
-  if getTreatmentTime(Time, C) != None:
-    treatmentTime = getTreatmentTime(Time, C)
+  if dp.getTreatmentTime(Time, C) != None:
+    treatmentTime = dp.getTreatmentTime(Time, C)
     return treatmentTime
   else:
     return np.nan
