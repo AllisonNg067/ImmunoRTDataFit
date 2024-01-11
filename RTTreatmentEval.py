@@ -9,6 +9,7 @@ from differential_equations import radioimmuno_response_model
 import new_data_processing as dp
 from data_processing import getCellCounts
 from BED import get_equivalent_bed_treatment
+import concurrent.futures
 
 #returns list of schedules and dose list
 def get_treatment_and_dose(bioEffDose, n, param):
