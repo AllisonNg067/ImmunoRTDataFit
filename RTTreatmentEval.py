@@ -51,7 +51,7 @@ param = pd.read_csv("mean of each parameter for RT set.csv")
 param = tuple(np.transpose(np.array(param))[0])
 errors = [errorControl, errorRT]
 errorMerged = dp.merge_lists(errors)
-sample_size = 250
+sample_size = 2000
 all_res_list = []
 IT = (False, False)
 num_fractions = 1
@@ -65,7 +65,7 @@ def evaluate_patient(i, k):
         #gets log normal parameters
         logNormalParams = dp.log_normal_parameters(param[j], errorMerged[j])
         #samples parameters from log normal distribution
-        paramNew[j] = min(max(np.random.lognormal(mean=logNormalParams[0], sigma = logNormalParams[1]), 0.8*param[j]), 2*param[j])
+        paramNew[j] = min(max(np.random.lognormal(mean=logNormalParams[0], sigma = logNormalParams[1]), 0.8*param[j]), 3*param[j])
       if j == 26:
         paramNew[j] = min(max(np.random.lognormal(mean=logNormalParams[0], sigma = logNormalParams[1]), 0.8*param[j]), 1.2*param[j])
       if j in [22, 32] and IT == (False, False):
