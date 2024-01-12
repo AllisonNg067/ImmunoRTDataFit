@@ -3,6 +3,7 @@ import numpy as np
 def annealing_optimization(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, param_id, T_0, dT, delta_t, free, t_f1, t_f2, nit_max, nit_T, LQL, activate_vd, use_Markov, day_length):
     param_op = param_0.copy()
     p = param_0[32]
+    c = param_0[22]
     param_best = param_0.copy()
     cost_op, t_eq_op, sol_op = least_squares(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_0, delta_t, free, t_f1, t_f2, LQL, activate_vd, use_Markov, day_length) #calculate cost with initial parameters
     cost_best = cost_op
@@ -20,6 +21,7 @@ def annealing_optimization(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param
             #print("j", j)
             param_new = neighbor(param_op, param_id, T, T_0) #get new parameters
             param_new[32] = p
+            param_new[22] = c
             # print("p1", param_new[32])
             # print(param_op)
             # print(param_new)
@@ -44,7 +46,9 @@ def annealing_optimization(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param
 
             costs.append(cost_best)
             param_op[32] = p
+            param_op[22] = c
             param_best[32] = p
+            param_best[22] = c
         T = dT * T  # Cooling
     sol_best, *_ = radioimmuno_response_model(param_best, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, 0,0)
     return param_best, cost_best, t_eq_best, np.array(costs), sol_best
