@@ -18,9 +18,10 @@ param_id = [24, 25] #index of parameters to be changed
 free = [1,1,0]
 param_0[-2] = 0.2
 param_0[22] = 0.2
-param_0[26] = 17
-param_0[28] = 0.2
-param_0[33] = 1
+#param_0[26] = 17
+#param_0[28] = 0.2
+#param_0[33] = 0.1
+param_0[25] = 0.2
 LQL = 0
 activate_vd = 0
 use_Markov = 0
@@ -75,7 +76,7 @@ for i in range(1,5):
 
 print()
 print("NEXT SET")
-data = pd.read_csv("../data/White mice data - PD-1 15 CTLA.csv")
+data = pd.read_csv("../data/White mice data - PD1-15 CTLA.csv")
 t_treat_p1 = np.array([15,17,19])
 t_treat_c4 = np.array([15])
 for i in range(1,9):
