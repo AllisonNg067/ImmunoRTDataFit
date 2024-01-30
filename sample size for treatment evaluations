@@ -1,3 +1,8 @@
 RT Only
 1 and 2 fractions have 2000 virtual patients
 3 fractions have 1000 virtual patients
+
+RT + PD
+1 RT, 1 PD has 500 virtual patients
+1 RT, 2 PD has 500 virtual patients
+2 RT, 1 PD has 500 virtual patients
