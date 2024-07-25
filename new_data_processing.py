@@ -26,15 +26,19 @@ def annealing_optimization(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param
             # print(param_op)
             # print(param_new)
             cost_new, t_eq, sol_new = least_squares(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_new, delta_t, free, t_f1, t_f2, LQL, activate_vd, use_Markov, day_length)
-            # print("new cost", cost_new)
-            # print("old cost", cost_op)
+            
             surv = survival(cost_new, cost_op, T) #determine whether to accept new point
 
             temperatures.append(T)
             #print(cost_new)
             if surv == 1:
-                # print("Change parameter")
+                
                 if cost_new < cost_best:
+                    print("new cost", cost_new)
+                    print("old cost", cost_best)
+                    print('diff', cost_new - cost_best)
+                    print()
+                    #print("Change parameter")
                     cost_best = cost_new
                     param_best = param_new.copy()
                     t_eq_best = t_eq
@@ -56,16 +60,26 @@ def annealing_optimization(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param
 def neighbor(param, param_id, T, T_0):
     # print(param_id)
     #var decreases when T decreases (more simulations)
-    var = (2 * np.random.rand() - 1.0) * 0.5 * np.sqrt(T / T_0)
+    #var = (2 * np.random.rand() - 1.0) * 0.5 * np.sqrt(T / T_0)
+    var = (2 * np.random.rand() - 1.0) * np.sqrt(T / T_0)
     m = len(param_id)
     id_ = np.random.randint(0, m) #index from 0 to m-1
+    #print(param[param_id[id_]])
     # print("id", param_id[id_])
     # print("before change", param[param_id[id_]])
+    # if param_id[id_] == 25:
+    #     print('old param', param[param_id[id_]])
     if param_id[id_] == 34:
         param[param_id[id_]] += var * 0.05
     else:
-        param[param_id[id_]] = max(0, param[param_id[id_]] * (1 + var))
-
+        #param[param_id[id_]] = max(0, param[param_id[id_]] * (1 + var))
+        var = (10 * np.random.rand()) * np.sqrt(T / T_0)
+        param[param_id[id_]] = max(0, param[param_id[id_]] * var)
+    #print('id', param_id[id_])
+    # if param_id[id_] == 25:
+        
+    #     print('var', var)
+    #     print('new param', max(3e-8, param[25]))
     # Values constraints
     param[2] = min(0.5, max(param[2], 0.02))  # alpha_C
     param[3] = min(param[2] / 2, max(param[2] / 20, param[3]))  # beta_C
@@ -78,8 +92,9 @@ def neighbor(param, param_id, T, T_0):
     param[17] = min(0.7, max(param[17], 0.03))  # eta
     param[19] = min(1, max(param[19], 0.05))  # h
     param[20] = min(1e-7, param[20])  # iota
-    param[23] = max(2, min(20, param[23]))  # r
-    param[25] = min(3e-7, param[25])  # a
+    param[23] = max(1, min(20, param[23]))  # r
+    param[24] = max(0, param[24])
+    param[25] = max(3e-8, param[25])  # a
     param[28] = min(1, param[28])  # q
     param[29] = min(0.01, param[29])
     # param(34) constraint: use only with the modified LQ model
@@ -101,19 +116,25 @@ def least_squares(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_new, del
     #print(np.array(INFO))
     param_new[22] = c4 * par_c4
     param_new[32] = p1 * par_p1
-    sol, t_eq, *_ = radioimmuno_response_model(param_new, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
+    sol, t_eq, times, *_ = radioimmuno_response_model(param_new, delta_t, free, t_f1, t_f2, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
         #print("sol obtained")
         # if t_eq == -1:  # Initial tumor volume not achieved
         #     cost_tot = 1e10
         #     return cost_tot, None
     ind = np.rint(DATA[0:day_length] / delta_t).astype(int)
-    #print(ind)
+    #print('ind', ind)
     data_y = DATA[day_length:2*day_length]
     err = DATA[2*day_length:3*day_length]
-    # print("data", data_y)
+    #print("data", data_y)
     # print("error", err)
-    #print(sol)
-    sol = sol[0][ind]
+    #print('fit volumes', sol)
+    #print('times', times)
+    #print(len(sol[0]))
+    #print(len(times))
+    indices = np.where(np.in1d(times, DATA[0:day_length]))[0]
+    #print(np.in1d(DATA[0:day_length], times))
+    #print('indices', indices)
+    sol = sol[0][indices]
     #print("vols", sol)
     if data_y.ndim != 1:
         data_y = data_y.reshape(-1)
@@ -122,6 +143,10 @@ def least_squares(DATA, D, t_rad, c4, p1, t_treat_c4, t_treat_p1, param_new, del
     data_y = list(data_y)
     err = list(err)
     cost = 0
+    #print(data_y)
+    #print(sol)
+    #print('times from fit', times[indices])
+    #print('times in data', DATA[0:day_length])
     for i in range(len(data_y)):
       if err[i] !=0:
         #print("diff", (data_y[i] - sol[i]))
