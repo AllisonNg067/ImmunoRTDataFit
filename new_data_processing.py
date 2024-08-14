@@ -81,9 +81,10 @@ def neighbor(param, param_id, T, T_0):
     #     print('var', var)
     #     print('new param', max(3e-8, param[25]))
     # Values constraints
-    param[2] = min(0.5, max(param[2], 0.02))  # alpha_C
+    param[2] = min(0.3, max(param[2], 0.02))  # alpha_C
     param[3] = min(param[2] / 2, max(param[2] / 20, param[3]))  # beta_C
     param[4] = min(0.7, max(param[4], 0.03))  # phi
+    param[10] = min(10**-5, max(param[10], 0))
     param[11] = min(0.7, max(param[11], 0.03))  # sigma
     param[12] = min(5, param[12])  # tau_1
     param[14] = min(0.5, max(1e-4, param[14]))  # alpha_T
@@ -208,3 +209,4 @@ def getTreatmentTime(times, C):
   for i in range(len(C[0])):
     if C[0][i] < 0.5:
       return times[i]
+
