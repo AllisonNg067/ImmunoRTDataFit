@@ -506,7 +506,7 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
             #print('C', C[:,j])
             SF_T[:, k] = np.exp(-1 * alpha_T * D[k] - beta_T * D[k] ** 2)
             # updates cancer cell count by killing off (1-SFC)*C of the cancer cells
-            print('before', newC[0])
+            #print('before', newC[0])
             C_dead[:, k] = (1 - SF_C[:, k]) * newC[0]
             
            #print(C[:,j])
@@ -515,7 +515,7 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
             # C[:,j+1] = C[:,j+1] - C_dead[:,k]
             
             newC = (newC[0]*SF_C[:,k][0],)
-            print('after treat', newC[0])
+            #print('after treat', newC[0])
             #print('treat', newC[0])
             # print(C[:, j])
             # print(C[0][500:-1])
@@ -621,16 +621,16 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
         
         
         C[:, j+1] = newC[0]
-        if D[0] != 0 and abs(time[j+1] - t_rad[k]) <= delta_t/2:
-            print('after assign', newC[0])
-            print('C after assign', C[:,j+1])
+        #if D[0] != 0 and abs(time[j+1] - t_rad[k]) <= delta_t/2:
+            #print('after assign', newC[0])
+            #print('C after assign', C[:,j+1])
         #print('before', C[:,j+1])
        
         C_tot[:,j+1] = newC[0] + C_dam_new[0]
         #C[:, j+1] = newC[0]
-        if D[0] != 0 and abs(time[j+1] - t_rad[k]) <= delta_t/2:
-            print('after C tot', newC[0])
-            print('C after C tot', C[:,j+1])
+        #if D[0] != 0 and abs(time[j+1] - t_rad[k]) <= delta_t/2:
+            #print('after C tot', newC[0])
+            #print('C after C tot', C[:,j+1])
         #print('after', C[:,j+1])
         vol[:, j+1] = tumor_volume(C_tot[:,j+1], Ta_tum[:, j+1], vol_C, vol_T)
         j = j + 1
