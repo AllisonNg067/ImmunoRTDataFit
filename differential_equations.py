@@ -283,8 +283,8 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
     M = np.zeros((d, m))
     # Total alive damaged tumor cells at each time step
     C_dam = np.zeros((1, m))
-    C_tot = C             # Total alive tumor cells
-    C_tot_no_treat = C
+    C_tot = C.copy()             # Total alive tumor cells
+    #C_tot_no_treat = C
     # Surviving fraction with LQ model parameters
     SF_C = np.zeros((1, d))    # Tumor cells surviving fraction
     SF_T = np.zeros((1, d))    # Lymphocytes surviving fraction
@@ -358,7 +358,8 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
         #     print("C total", C_tot[:,j])
         #     print("Tb_lym", Tb_lym[:,j])
         # growth rate of C due to natural tumor growth
-        prol = growth(lambda_1, C_tot[:, j], lambda_2)
+        prol = growth(lambda_1, C_tot[:, j], lambda_2)[0]
+        #print(prol)
         p_11 = p_1
         ind_p11 = ind_p1
         storeTalym = (Ta_lym[:, j][0],)
@@ -417,7 +418,8 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
             newC = (0,)
             newC_no_treat = (0,)
         else:
-            newC = (max(0, C[:, j] + delta_t * (prol - immune[0]) * C[:, j]),)
+            newC = (max(0, (C[:, j] + delta_t * (prol - immune[0]) * C[:, j])[0]),)
+            #print('before', newC[0])
             #newC_no_treat = (max(0, C_no_treat[:, j] + delta_t * (prol - immune[0]) * C_no_treat[:, j]),)
         T_lym[:, j+1], A[:, j+1], Ta_lym[:, j+1], Tb_lym[:, j+1], c4_flag, c_4 = A_activate_T(
             a, b, T_lym_0, h, c4, c_4, ni, t_treat_c4[ind_c4 - 1], time[j+1], delta_t, T_lym[:, j], A[:, j], vol_flag, time_flag, Ta_lym[:, j], Tb_lym[:, j], j, multiplier)
@@ -504,14 +506,17 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
             #print('C', C[:,j])
             SF_T[:, k] = np.exp(-1 * alpha_T * D[k] - beta_T * D[k] ** 2)
             # updates cancer cell count by killing off (1-SFC)*C of the cancer cells
+            print('before', newC[0])
             C_dead[:, k] = (1 - SF_C[:, k]) * newC[0]
+            
            #print(C[:,j])
             # print(SF_C[:,k])
             # print("before RT kill", C[:, j+1])
             # C[:,j+1] = C[:,j+1] - C_dead[:,k]
-            newC = (newC[0] - C_dead[:, k],)
-            #rint('after', newC[0])
-            # print(newC[0])
+            
+            newC = (newC[0]*SF_C[:,k][0],)
+            print('after treat', newC[0])
+            #print('treat', newC[0])
             # print(C[:, j])
             # print(C[0][500:-1])
             # print(Ta_tum[:,j])
@@ -532,8 +537,8 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
 
         # The sum of the columns of M is the total damaged tumor cells that
         # are going to die in each time step
-            C_dam[:, j+1] = np.sum(M[:, j+1])
-
+            C_dam_new = (np.sum(M[:, j+1]),)
+            #print(C_dam_new)
             k = min(k + 1, len(t_rad) - 1)
 
         # elif vol_flag == 1 and time_flag == 1 and D[0] != 0:
@@ -548,7 +553,8 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
                                  (C_kin - im_death_d) * M[ii, j])
             # The sum of the columns of M is the total damaged tumor cells that
         # are going to die in each time step
-            C_dam[:, j+1] = np.sum(M[:, j+1])
+            C_dam_new = (np.sum(M[:, j+1]),)
+            #print(C_dam_new)
         # print(j)
         # print(Ta_tum[:,j+1])
         # get rid of negative values
@@ -582,28 +588,51 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
         # C_no_treat[:, j+1] = newC_no_treat[0]
         if newC[0] < 0.5:
             newC = (0,)
-        if C_dam[:, j+1] < 0.5:
-            C_dam[:, j+1] = 0
+        if C_dam_new[0] < 0.5:
+            C_dam_new = (0,)
         if A[:, j+1] < 0:
             A[:, j+1] = 0
         if Ta_tum[:, j+1] < 0:
             Ta_tum[:, j+1] = 0
-        C_tot[:, j+1] = newC[0] + C_dam[:, j+1]
-        C[:, j+1] = newC[0]
+        
+        #print('before', newC[0])
+        C_dam[:,j+1] = C_dam_new[0]
+        
+        #C_tot_new = (newC[0] + C_dam_new[0],)
+        
+        #print(C_tot_new[0])
         # if D[0] != 0 and abs(time[j+1] - t_rad[k]) <= delta_t/2:
         #     print('C var', C[:,j+1])
        
         # if D[0] != 0 and abs(time[j+1] - t_rad[k]) <= delta_t/2:
         #     print('C var', C[:,j+1])
             # C_tot_no_treat[:, j+1] = newC_no_treat[0] + C_dam[:, j+1]
-
+            
             # calculate tumour volume at the time step by V = C*VC + Ta*VT
-        vol[:, j+1] = tumor_volume(C_tot[:, j+1], Ta_tum[:, j+1], vol_C, vol_T)
+        
         
         #print('c4', c_4)
         #print('A treatment', A[:, j+1])
         #print('A no treatment', A_no_treat[:, j+1])
-
+        
+        
+        
+        
+        
+        
+        C[:, j+1] = newC[0]
+        if D[0] != 0 and abs(time[j+1] - t_rad[k]) <= delta_t/2:
+            print('after assign', newC[0])
+            print('C after assign', C[:,j+1])
+        #print('before', C[:,j+1])
+       
+        C_tot[:,j+1] = newC[0] + C_dam_new[0]
+        #C[:, j+1] = newC[0]
+        if D[0] != 0 and abs(time[j+1] - t_rad[k]) <= delta_t/2:
+            print('after C tot', newC[0])
+            print('C after C tot', C[:,j+1])
+        #print('after', C[:,j+1])
+        vol[:, j+1] = tumor_volume(C_tot[:,j+1], Ta_tum[:, j+1], vol_C, vol_T)
         j = j + 1
         #print('A treatment', A[:, j])
         #print('A no treatment', A_no_treat[:, j])
@@ -645,64 +674,3 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
             #print('A no treatment', A[:,j-2]+ delta_t * (- 1*a*A[:,j-2] - b*T_lym[:,j-2]*A[:,j-2] + nat_rel + A_natural_out(sigma, A[:,j-2])) + RT_rel)
             #print('last time', time[-1])
             return vol, t_eq, time, C_tot, C, C_dam, A, Ta_tum, T_lym, Ta_lym, Tb_lym, c4_list
-
-
-# param = [500000.0, 0.4043764660304215, 0.3348825012978519, 0.0444792478133069, 0.051958556519556, 1.0, 1.5, 1.0000000000000004e-06, 0.0, 1.82061785504427e-21, 1.6370031265953986, 0.0492366376540959, 0.6416711700693031, 0.1617903030935988, 0.0416924514099231, 0.00416924514099231, 2.0,
-#           0.0674559557659555, 299838.7440652358, 0.198909083172271, 9.211522519585746e-09, 8.284618352937945e-07, 4.722366482869665e-51, 5.0, 0.00001, 2e-5, 0.1379556739056123, 0.4073542114448485, 0.0481351408570356, 0.0099999999999999, 1.1404642118810832e-106, 0.0053955684115056, 0.2, 0.1]
-# free = [1, 1, 0]
-
-# # param[25] = 10**-8
-# # param[-2] = 0.2
-# LQL = 0
-# activate_vd = 0
-# use_Markov = 0
-# # T_0 = 1
-# # dT = 0.98
-# t_f1 = 0
-# t_f2 = 90
-# delta_t = 0.05
-# D = [20]
-# t_rad = [10]
-# t_treat_c4 = np.array([10])
-# t_treat_p1 = np.array([10, 12, 14])
-# # c4 = 2
-# # p1 = 0.2
-# param = [500000.0, 0.4043764660304215, 0.3348825012978519, 0.0444792478133069, 0.051958556519556, 1.0, 1.5, 1.0000000000000004e-06, 0.0, 1.82061785504427e-21, 1.6370031265953986, 0.0492366376540959, 0.6416711700693031, 0.1617903030935988, 0.0416924514099231, 0.00416924514099231, 2.0, 0.0674559557659555, 299838.7440652358, 0.198909083172271, 9.211522519585746e-09, 8.284618352937945e-07, 2, 5.0, 1e-05, 2e-05, 0.1379556739056123, 0.4073542114448485, 0.0481351408570356, 0.0099999999999999, 1.1404642118810832e-106, 0.0053955684115056, 0.2, 0.1, 1]
-# # param[22] = 0.2  # ctla4 dose
-# # param[24] = 0.0005  # ctla4 decay rate
-# # param[25] = 10**-5
-# # param[-1] = 10**20
-# vol, _, time, C_tot, C, C_dam, A, Ta_tum, T_lym, Ta_lym, Tb_lym, c_4 = radioimmuno_response_model(param, 0.05, free, t_f1, 35, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
-# # #print(Ta_tum)
-# # c4=0
-# #param[22] = 0
-# #param[-2] = 0
-# #param[25] = 10**-1
-# #param[-1] = 10**40
-# D = [30]
-# vol_new, _, time, C_tot, C_new, C_dam, A_new, Ta_tum_new, T_lym_new, Ta_lym_new, Tb_lym_new, c_4_new = radioimmuno_response_model(param, 0.05, free, t_f1, 35, D, t_rad, t_treat_c4, t_treat_p1, LQL, activate_vd, use_Markov)
-# plt.plot(time, C[0] - C_new[0])
-#print(Ta_tum_new)
-#print(Ta_tum - Ta_tum_new)
-#print(c_4)
-#print(c_4_new)
-# plt.plot(time, vol[0], '--', color ='red', label ="volumes")
-# plt.title('Volume vs Time for PD 1 and CTLA4 Treatment')
-# plt.legend()
-#plt.plot(time, vol[0], '--', color ='red', label ="treat")
-#plt.plot(time, vol_new[0], '--', color ='blue', label ="control")
-# plt.title('ctla4 concentration for PD 1 and CTLA4 Treatment')
-#plt.legend()
-# plt.plot(time, A[0], '--', color ='red', label ="treat")
-# plt.plot(time, A_control[0], '--', color ='blue', label ="control")
-# plt.legend()
-# print(vol[0] - vol_new[0])
-#plt.plot(time, vol[0] - vol_new[0], '-', color ='blue', label ="control")
-# plt.title('Difference in Tumour Volume with \n and without Anti-CTLA4 Treatment')
-# plt.savefig('tumour volume difference updated.png')
-#def sign(x):
-    #return np.where(x > 0, 1.0, np.where(x == 0, 0, -1.0))
-
-# print(sign(Ta_tum - Ta_tum_new))
-# plt.scatter(time[500:], sign(Ta_tum - Ta_tum_new)[0][500:], s = 0.1, marker='o')
-
