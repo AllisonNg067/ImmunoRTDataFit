@@ -4,7 +4,7 @@ import new_data_processing as dp
 errorControl = pd.read_csv("errors for control set.csv")
 errorControl = list(np.transpose(np.array(errorControl))[0])
 errorControl.append(0)
-errorRT = pd.read_csv("RT errors setonix v1.csv")
+errorRT = pd.read_csv("new errors for RT set.csv")
 errorRT = list(np.transpose(np.array(errorRT))[0])
 errorRT.append(0)
 errorPD = pd.read_csv("PD1 errors.csv")
@@ -12,7 +12,7 @@ errorPD = list(np.transpose(np.array(errorPD))[0])
 errorPD.append(0)
 errorCTLA4 = pd.read_csv("PD1 CTLA4 errors.csv")
 errorCTLA4 = list(np.transpose(np.array(errorCTLA4))[0])
-param = pd.read_csv("RT means setonix v1.csv")
+param = pd.read_csv("mean of each parameters for RT set.csv")
 param = list(np.transpose(np.array(param))[0])
 param[26] = 0.13795567390561228
 param[27] = 0.4073542114448485
