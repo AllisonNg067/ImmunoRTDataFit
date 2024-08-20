@@ -324,6 +324,7 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
     k = 0                 # Radiation vector index
     ind_c4 = 0            # c4 treatment vector index
     ind_p1 = 0            # p1 treatment vector index
+    V_0 = tumor_volume(C_0, Ta_tum_0, vol_C, vol_T)
     # print(m)
     # print(del_1)
     # print(del_2)
@@ -342,7 +343,7 @@ def radioimmuno_response_model(param, delta_t, free, t_f1, t_f2, D, t_rad, t_tre
         # T_lym_no_treat[:, i] = T_lym_0
         # Tb_lym_no_treat[:, i] = 0
         # C_tot_no_treat[:, i] = C_0
-        vol[:, i] = C_0*vol_C
+        vol[:, i] = V_0
         c4_list.append(0)
 
     # Algorithm
